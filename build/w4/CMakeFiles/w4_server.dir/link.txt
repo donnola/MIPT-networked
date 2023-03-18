@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/w4_server.dir/server.cpp.o CMakeFiles/w4_server.dir/protocol.cpp.o -o w4_server  ../3rdParty/enet/libenet.a 

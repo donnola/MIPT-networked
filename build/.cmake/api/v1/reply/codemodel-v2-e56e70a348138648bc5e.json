@@ -1,0 +1,283 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						7
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "3rdParty",
+					"childIndexes" : 
+					[
+						2,
+						6
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-3rdParty-Debug-a57902d5c933ba137f98.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "3rdParty"
+				},
+				{
+					"build" : "3rdParty/raylib",
+					"childIndexes" : 
+					[
+						3
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-3rdParty.raylib-Debug-b632fcf6b37844b43422.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 2,
+					"source" : "3rdParty/raylib"
+				},
+				{
+					"build" : "3rdParty/raylib/raylib",
+					"childIndexes" : 
+					[
+						4
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-3rdParty.raylib.raylib-Debug-86cd0129ce551112d201.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 2,
+					"source" : "3rdParty/raylib/src",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "3rdParty/raylib/raylib/external/glfw",
+					"childIndexes" : 
+					[
+						5
+					],
+					"jsonFile" : "directory-3rdParty.raylib.raylib.external.glfw-Debug-0af800cea65328ee4386.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 3,
+					"source" : "3rdParty/raylib/src/external/glfw"
+				},
+				{
+					"build" : "3rdParty/raylib/raylib/external/glfw/src",
+					"jsonFile" : "directory-3rdParty.raylib.raylib.external.glfw.src-Debug-a6aec042c6ee56b995bb.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 4,
+					"projectIndex" : 3,
+					"source" : "3rdParty/raylib/src/external/glfw/src",
+					"targetIndexes" : 
+					[
+						1,
+						3
+					]
+				},
+				{
+					"build" : "3rdParty/enet",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-3rdParty.enet-Debug-fc03e36ecf5b34cea2ba.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.12"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 4,
+					"source" : "3rdParty/enet",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "w4",
+					"jsonFile" : "directory-w4-Debug-f86b6609d24d27c62344.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 5,
+					"source" : "w4",
+					"targetIndexes" : 
+					[
+						4,
+						5
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						5
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "networked"
+				},
+				{
+					"childIndexes" : 
+					[
+						2,
+						4
+					],
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "networked-3rdparty",
+					"parentIndex" : 0
+				},
+				{
+					"childIndexes" : 
+					[
+						3
+					],
+					"directoryIndexes" : 
+					[
+						2,
+						3
+					],
+					"name" : "raylib",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4,
+						5
+					],
+					"name" : "GLFW",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						1,
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						6
+					],
+					"name" : "enet",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						7
+					],
+					"name" : "w4",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4,
+						5
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 6,
+					"id" : "enet::@8bf7eba800d4eb2b471a",
+					"jsonFile" : "target-enet-Debug-cffdda1d1e2e6ac38aa2.json",
+					"name" : "enet",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "glfw::@3c6349411b48bf02f424",
+					"jsonFile" : "target-glfw-Debug-732d097dc36225b5103c.json",
+					"name" : "glfw",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "raylib::@a33baafefcddb13d8929",
+					"jsonFile" : "target-raylib-Debug-9442d51adc2b7ee2e21f.json",
+					"name" : "raylib",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "update_mappings::@3c6349411b48bf02f424",
+					"jsonFile" : "target-update_mappings-Debug-af37260861329dd7744b.json",
+					"name" : "update_mappings",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "w4::@6ea2de09515ecfe9be07",
+					"jsonFile" : "target-w4-Debug-b4c695563b5d259a0a88.json",
+					"name" : "w4",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "w4_server::@6ea2de09515ecfe9be07",
+					"jsonFile" : "target-w4_server-Debug-299b7978cb5ba952baa6.json",
+					"name" : "w4_server",
+					"projectIndex" : 5
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/ferret/Documents/MIPT-networked/build",
+		"source" : "/home/ferret/Documents/MIPT-networked"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

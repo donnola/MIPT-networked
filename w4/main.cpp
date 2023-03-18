@@ -32,13 +32,15 @@ void on_snapshot(ENetPacket *packet)
 {
   uint16_t eid = invalid_entity;
   float x = 0.f; float y = 0.f;
-  deserialize_snapshot(packet, eid, x, y);
+  float size;
+  deserialize_snapshot(packet, eid, x, y, size);
   // TODO: Direct adressing, of course!
   for (Entity &e : entities)
     if (e.eid == eid)
     {
       e.x = x;
       e.y = y;
+      e.size = size;
     }
 }
 
@@ -68,9 +70,10 @@ int main(int argc, const char **argv)
     return 1;
   }
 
-  int width = 1920;
-  int height = 1080;
-  InitWindow(width, height, "w6 AI MIPT");
+  int width = win_width;
+  int height = win_height;
+  
+  InitWindow(width, height, "w4 MIPT");
 
   const int scrWidth = GetMonitorWidth(0);
   const int scrHeight = GetMonitorHeight(0);
@@ -146,8 +149,7 @@ int main(int argc, const char **argv)
       BeginMode2D(camera);
         for (const Entity &e : entities)
         {
-          const Rectangle rect = {e.x, e.y, 10.f, 10.f};
-          DrawRectangleRec(rect, GetColor(e.color));
+          DrawCircle(e.x, e.y, e.size, GetColor(e.color));
         }
 
       EndMode2D();

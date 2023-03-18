@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/w4.dir/main.cpp.o CMakeFiles/w4.dir/protocol.cpp.o -o w4  ../3rdParty/raylib/raylib/libraylib.a ../3rdParty/enet/libenet.a -lm -latomic -lpthread /usr/lib/x86_64-linux-gnu/libOpenGL.so /usr/lib/x86_64-linux-gnu/libGLX.so /usr/lib/x86_64-linux-gnu/libGLU.so ../3rdParty/raylib/raylib/external/glfw/src/libglfw3.a /usr/lib/x86_64-linux-gnu/librt.a -lm -ldl 
