@@ -63,14 +63,15 @@ void on_join(ENetPacket *packet, ENetPeer *peer, ENetHost *host)
   for (const Entity &e : entities)
     maxEid = std::max(maxEid, e.eid);
   uint16_t newEid = maxEid + 1;
-  uint32_t color = 0x000000ff +
-                   ((rand() % 255) << 8) +
-                   ((rand() % 255) << 16) +
-                   ((rand() % 255) << 24);
-  float x = (rand() % win_width) - win_width / 2.f;
-  float y = (rand() % win_height) - win_height / 2.f;
-  float size = (rand() % int(min_size)) + init_size;
-  Entity ent = {color, x, y, newEid, size, EntityType::PLAYER};
+
+  uint32_t color = 0xff000000 +
+                   0x00440000 * (rand() % 5) +
+                   0x00004400 * (rand() % 5) +
+                   0x00000044 * (rand() % 5);
+  float x = (rand() % 4) * 200.f;
+  float y = (rand() % 4) * 200.f;
+  Entity ent = {color, x, y, newEid};
+
   entities.push_back(ent);
 
   controlledMap[newEid] = peer;
@@ -225,7 +226,6 @@ int main(int argc, const char **argv)
         if (e.type == EntityType::AI || controlledMap[e.eid] != peer)
           send_snapshot(peer, e.eid, e.x, e.y, e.size);
       }
-    usleep(10000);
   }
 
   enet_host_destroy(server);
