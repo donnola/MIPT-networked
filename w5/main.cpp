@@ -4,24 +4,35 @@
 #include "raylib.h"
 #include <enet/enet.h>
 #include <math.h>
+#include <algorithm> 
 
 #include <vector>
+#include <map>
+#include <deque>
 #include "entity.h"
 #include "protocol.h"
+#include "snapshot.h"
 
 
-static std::vector<Entity> entities;
+static std::map<uint16_t, Entity> entities;
+static std::map<uint16_t, Snapshot> last_snapshots;
+std::unordered_map<uint16_t, std::deque<Snapshot>> snapshots = {};
 static uint16_t my_entity = invalid_entity;
+const uint32_t offset = 200u;
+constexpr uint32_t tick_time = 15;//ms
+constexpr float dt = tick_time * 0.001f;
+
 
 void on_new_entity_packet(ENetPacket *packet)
 {
   Entity newEntity;
   deserialize_new_entity(packet, newEntity);
-  // TODO: Direct adressing, of course!
-  for (const Entity &e : entities)
-    if (e.eid == newEntity.eid)
-      return; // don't need to do anything, we already have entity
-  entities.push_back(newEntity);
+  if (!entities.contains(newEntity.eid) && newEntity.eid != my_entity)
+  {
+    entities[newEntity.eid] = std::move(newEntity);
+    last_snapshots[newEntity.eid] = {newEntity.x, newEntity.y, newEntity.ori, enet_time_get()};
+    snapshots[newEntity.eid] = std::deque<Snapshot>();
+  }
 }
 
 void on_set_controlled_entity(ENetPacket *packet)
@@ -33,15 +44,48 @@ void on_snapshot(ENetPacket *packet)
 {
   uint16_t eid = invalid_entity;
   float x = 0.f; float y = 0.f; float ori = 0.f;
-  deserialize_snapshot(packet, eid, x, y, ori);
-  // TODO: Direct adressing, of course!
-  for (Entity &e : entities)
-    if (e.eid == eid)
+  uint32_t tick = 0;
+  deserialize_snapshot(packet, eid, x, y, ori, tick);
+  if (eid != my_entity && snapshots.contains(eid))
+  {
+    snapshots[eid].emplace_back(x, y, ori, enet_time_get() + offset);
+  }
+}
+
+void interpolation()
+{
+  for (auto & last_snapshot : last_snapshots)
+  {
+    uint16_t eid = last_snapshot.first;
+    Snapshot & l_s = last_snapshot.second;
+    auto curTime = enet_time_get();
+    while (!snapshots[eid].empty())
     {
-      e.x = x;
-      e.y = y;
-      e.ori = ori;
+      Snapshot &s = snapshots[eid].front();
+      if (curTime >= s.timestamp)
+      {
+        last_snapshots[eid] = s;
+        snapshots[eid].pop_front();
+      }
+      else
+      {
+        float t = (float)(curTime - l_s.timestamp) / (s.timestamp - l_s.timestamp);
+        entities[eid].x = (1.f - t) * l_s.x + t * s.x;
+        entities[eid].y = (1.f - t) * l_s.y + t * s.y;
+        entities[eid].ori = (1.f - t) * l_s.ori + t * s.ori;
+        break;
+      }
     }
+  }
+}
+
+void simulation(float thr, float steer)
+{
+  Entity &entity = entities[my_entity];
+  entity.thr = thr;
+  entity.steer = steer;
+  simulate_entity(entity, dt);
+  entity.timestamp++;
 }
 
 int main(int argc, const char **argv)
@@ -92,7 +136,6 @@ int main(int argc, const char **argv)
 
 
   SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-
   bool connected = false;
   while (!WindowShouldClose())
   {
@@ -132,25 +175,25 @@ int main(int argc, const char **argv)
       bool up = IsKeyDown(KEY_UP);
       bool down = IsKeyDown(KEY_DOWN);
       // TODO: Direct adressing, of course!
-      for (Entity &e : entities)
-        if (e.eid == my_entity)
-        {
-          // Update
-          float thr = (up ? 1.f : 0.f) + (down ? -1.f : 0.f);
-          float steer = (left ? -1.f : 0.f) + (right ? 1.f : 0.f);
-
-          // Send
-          send_entity_input(serverPeer, my_entity, thr, steer);
-        }
+      if (entities.contains(my_entity))
+      {
+        // Update
+        float thr = (up ? 1.f : 0.f) + (down ? -1.f : 0.f);
+        float steer = (left ? -1.f : 0.f) + (right ? 1.f : 0.f);
+        simulation(thr, steer);
+        
+        // Send
+        send_entity_input(serverPeer, my_entity, thr, steer);
+      }
     }
-
+    interpolation();
     BeginDrawing();
       ClearBackground(GRAY);
       BeginMode2D(camera);
-        for (const Entity &e : entities)
+        for (const auto &e : entities)
         {
-          const Rectangle rect = {e.x, e.y, 3.f, 1.f};
-          DrawRectanglePro(rect, {0.f, 0.5f}, e.ori * 180.f / PI, GetColor(e.color));
+          const Rectangle rect = {e.second.x, e.second.y, 3.f, 1.f};
+          DrawRectanglePro(rect, {0.f, 0.5f}, e.second.ori * 180.f / PI, GetColor(e.second.color));
         }
 
       EndMode2D();
