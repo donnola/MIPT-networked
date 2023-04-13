@@ -23,6 +23,11 @@ constexpr uint32_t tick_time = 15;//ms
 constexpr float dt = tick_time * 0.001f;
 
 
+uint32_t time_to_tick(uint32_t time)
+{
+  return time / tick_time;
+}
+
 void on_new_entity_packet(ENetPacket *packet)
 {
   Entity newEntity;
@@ -44,8 +49,8 @@ void on_snapshot(ENetPacket *packet)
 {
   uint16_t eid = invalid_entity;
   float x = 0.f; float y = 0.f; float ori = 0.f;
-  uint32_t tick = 0;
-  deserialize_snapshot(packet, eid, x, y, ori, tick);
+  uint32_t timestamp = 0;
+  deserialize_snapshot(packet, eid, x, y, ori, timestamp);
   if (eid != my_entity && snapshots.contains(eid))
   {
     snapshots[eid].emplace_back(x, y, ori, enet_time_get() + offset);
@@ -79,13 +84,16 @@ void interpolation()
   }
 }
 
-void simulation(float thr, float steer)
+void simulation(float thr, float steer, uint32_t ticks) 
 {
   Entity &entity = entities[my_entity];
   entity.thr = thr;
   entity.steer = steer;
-  simulate_entity(entity, dt);
-  entity.timestamp++;
+  for (uint32_t t = 0; t < ticks; ++t)
+  {
+    simulate_entity(entity, dt);
+    entity.timestamp++;
+  }
 }
 
 int main(int argc, const char **argv)
@@ -137,8 +145,10 @@ int main(int argc, const char **argv)
 
   SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
   bool connected = false;
+  uint32_t lastTime = enet_time_get();
   while (!WindowShouldClose())
   {
+    uint32_t curTime = enet_time_get();
     float dt = GetFrameTime();
     ENetEvent event;
     while (enet_host_service(client, &event, 0) > 0)
@@ -180,8 +190,8 @@ int main(int argc, const char **argv)
         // Update
         float thr = (up ? 1.f : 0.f) + (down ? -1.f : 0.f);
         float steer = (left ? -1.f : 0.f) + (right ? 1.f : 0.f);
-        simulation(thr, steer);
-        
+        simulation(thr, steer, time_to_tick(curTime - lastTime));
+        lastTime = curTime;
         // Send
         send_entity_input(serverPeer, my_entity, thr, steer);
       }

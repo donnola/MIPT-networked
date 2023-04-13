@@ -48,14 +48,14 @@ void send_entity_input(ENetPeer *peer, uint16_t eid, float thr, float steer)
   enet_peer_send(peer, 1, packet);
 }
 
-void send_snapshot(ENetPeer *peer, MessageType msg, uint16_t eid, float x, float y, float ori, uint32_t tick)
+void send_snapshot(ENetPeer *peer, uint16_t eid, float x, float y, float ori, uint32_t tick)
 {
   ENetPacket *packet = enet_packet_create(nullptr, sizeof(uint8_t) + sizeof(uint16_t) +
                                                    2 * sizeof(float) + sizeof(size_t) + sizeof(uint32_t),
                                                    ENET_PACKET_FLAG_UNSEQUENCED);
   
   WtiteBitstream w_bs(packet->data);
-  w_bs.write(msg);
+  w_bs.write(E_SERVER_TO_CLIENT_SNAPSHOT);
   w_bs.write(eid);
   w_bs.write(x);
   w_bs.write(y);

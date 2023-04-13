@@ -17,7 +17,7 @@ void send_join(ENetPeer *peer);
 void send_new_entity(ENetPeer *peer, const Entity &ent);
 void send_set_controlled_entity(ENetPeer *peer, uint16_t eid);
 void send_entity_input(ENetPeer *peer, uint16_t eid, float thr, float steer);
-void send_snapshot(ENetPeer *peer, MessageType msg, uint16_t eid, float x, float y, float ori, uint32_t tick);
+void send_snapshot(ENetPeer *peer, uint16_t eid, float x, float y, float ori, uint32_t tick);
 
 MessageType get_packet_type(ENetPacket *packet);
 
