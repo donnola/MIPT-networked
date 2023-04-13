@@ -11,3 +11,8 @@ void simulate_entity(Entity &e, float dt)
   e.y += sinf(e.ori) * e.speed * dt;
 }
 
+uint32_t time_to_tick(uint32_t time)
+{
+  return time / tick_time;
+}
+

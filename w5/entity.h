@@ -19,3 +19,9 @@ struct Entity
 
 void simulate_entity(Entity &e, float dt);
 
+constexpr uint32_t tick_time = 15;//ms
+constexpr float dt = tick_time * 0.001f;
+
+
+uint32_t time_to_tick(uint32_t time);
+
