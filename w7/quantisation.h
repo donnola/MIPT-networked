@@ -1,6 +1,7 @@
 #pragma once
 #include "mathUtils.h"
 #include <limits>
+#include <iostream>
 
 struct float2
 {
@@ -98,7 +99,102 @@ struct PackedFloat3
 
 typedef PackedFloat3<uint64_t, 22, 20, 22> float3_22_20_22bitsQuantized;
 
-// void packed_int32(int32_t n)
-// {
 
-// };
+static uint32_t uint8_max = std::numeric_limits<uint8_t>::max();
+static uint32_t uint16_max = std::numeric_limits<uint16_t>::max();
+static uint32_t uint32_max = std::numeric_limits<uint32_t>::max();
+
+void* packed_uint32(uint32_t v)
+{
+  if (v < uint8_max / 2)
+  {
+    uint8_t val = v << 1; /// xxxxx0
+    uint8_t* ptr = new uint8_t;
+    *ptr = val;
+    return ptr;
+  }
+  if (v < uint16_max / 4)
+  {
+		uint16_t val = (v << 2) + 1; /// xxxx01
+    uint16_t* ptr = new uint16_t;
+    *ptr = val;
+    return ptr;
+  }
+  if (v < uint32_max / 4)
+  {
+    int32_t val = (v << 2) + 3; /// xxxx11
+    uint32_t* ptr = new uint32_t;
+    *ptr = val;
+    return ptr;
+  }
+  std::cout << "Can't pack value\n";
+  return nullptr;
+};
+
+void* packed_uint16(uint16_t v)
+{
+  if (v < uint8_max / 2)
+  {
+    uint8_t val = v << 1; /// xxxxx0
+    uint8_t* ptr = new uint8_t;
+    *ptr = val;
+    return ptr;
+  }
+  if (v < uint16_max / 2)
+  {
+		uint16_t val = (v << 1) + 1; /// xxxxx1
+    uint16_t* ptr = new uint16_t;
+    *ptr = val;
+    return ptr;
+  }
+  std::cout << "Can't pack value\n";
+  return nullptr;
+};
+
+uint32_t unpack_uint32(void* packed_val)
+{
+  if (!packed_val)
+  {
+    std::cout << "Can't unpack value\n";
+    return 0;
+  }
+  uint8_t val8 = *(uint8_t*)packed_val;
+  uint16_t val16 = *(uint16_t*)packed_val;
+  uint32_t val32 = *(uint32_t*)packed_val;
+
+
+  uint8_t val_for_check = val8;
+  int b1 = val_for_check % 2;
+  val_for_check /= 2;
+  int b2 = val_for_check % 2;
+
+  if (b1 == 0)
+  {
+    return (uint32_t)(val8 >> 1);
+  }
+  if (b2 == 0)
+  {
+    return (uint32_t)((val16 - 1) >> 2);
+  }
+  return (uint32_t)((val32 - 3) >> 2);
+}
+
+uint16_t unpack_uint16(void* packed_val)
+{
+  if (!packed_val)
+  {
+    std::cout << "Can't unpack value\n";
+    return 0;
+  }
+  uint8_t val8 = *(uint8_t*)packed_val;
+  uint16_t val16 = *(uint16_t*)packed_val;
+
+  uint8_t val_for_check = val8;
+  int b1 = val_for_check % 2;
+
+  if (b1 == 0)
+  {
+    return (uint32_t)(val8 >> 1);
+  }
+  return (uint32_t)((val16 - 1) >> 1);
+}
